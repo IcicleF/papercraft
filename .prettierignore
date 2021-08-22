@@ -1,0 +1,7 @@
+# Ignore node packages
+node_modules/
+package.json
+package-lock.json
+
+# Ignore VSCode
+.vscode
