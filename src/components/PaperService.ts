@@ -1,7 +1,7 @@
-import { globalConnection } from './Connection';
-import Paper from '../entity/Paper';
+import { getMongoDB } from "./Database";
 
-export async function putPaper() {
-    let conn = await globalConnection();
-    
+export const putPaper = async (title: string): Promise<boolean> => {
+    let db = await getMongoDB();
+    let res = await db.collection('paper').insertOne({ name: title });
+    return res.acknowledged;
 }

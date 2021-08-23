@@ -19,10 +19,14 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "strictNullChecks": true,
-    // TypeORM
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strict": false
+    "strict": false,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"],
+      "components/*": ["src/components/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
