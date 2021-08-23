@@ -1,8 +1,27 @@
-function Main() {
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        '& > *': {
+            margin: theme.spacing(1),
+        },
+    },
+}));
+
+export default function Main() {
+    const classes = useStyles();
+
     return (
-        <div>
-            Welcome to Papercraft!
+        <div className={classes.root}>
+            <Button variant="contained" color="primary">
+                Read Database
+            </Button>
+            <Typography>
+                {}
+            </Typography>
         </div>
     );
-}
-export default Main;
+};
