@@ -1,14 +1,17 @@
-# Ignore node packages
+# Node packages
 node_modules/
 package.json
 package-lock.json
 
-# Ignore project configurations
+# Project configurations
 .prettierrc.json
 .prettierignore
 next-env.d.ts
 ormconfig.json
 tsconfig.json
 
-# Ignore VSCode
+# Next.js
+.next/
+
+# VSCode
 .vscode

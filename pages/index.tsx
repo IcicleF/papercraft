@@ -15,25 +15,23 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Main() {
     const classes = useStyles();
-    const [ dbObj, setDbObj ] = useState<string>('');
+    const [dbObj, setDbObj] = useState<string>('');
 
     const reqPutPaper = async () => {
-        console.log('reqPutPaper'); 
+        console.log('reqPutPaper');
         let res = await axios.put('/api/paper', { title: 'LocoFS' });
         console.log(res.status);
     };
 
     return (
         <div className={classes.root}>
-            <Button variant="contained" color="primary" onClick={reqPutPaper}>
+            <Button variant='contained' color='primary' onClick={reqPutPaper}>
                 Put paper
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant='contained' color='primary'>
                 Get paper
             </Button>
-            <Typography variant="body1">
-                { dbObj }
-            </Typography>
+            <Typography variant='body1'>{dbObj}</Typography>
         </div>
     );
-};
+}
