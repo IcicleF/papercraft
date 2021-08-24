@@ -45,11 +45,13 @@ export default function UnauthorizedUser() {
                     </Grid>
                     {session &&
                         <>
-                            <Grid item xs={12} justifyContent='center' alignItems='center'>
+                            <Grid item xs={12}>
                                 {session.user?.email &&
                                     <>
                                         <Typography align='center' variant='body1' className={classes.typography}>
                                             This site is only open to authorized users.
+                                        </Typography>
+                                        <Typography align='center' variant='body1' className={classes.typography}>
                                             Your email address {session.user?.email} is not accepted.
                                         </Typography>
                                         <Typography align='center' variant='body1' className={classes.typography}>

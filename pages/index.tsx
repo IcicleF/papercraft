@@ -7,6 +7,8 @@ import UnauthorizedUser from './auth/unauthorized';
 import axios from 'axios';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
+import { checkEmail } from 'src/components/Utils';
+
 const useStyles = makeStyles((theme) => ({
     root: {
         '& > *': {
@@ -27,7 +29,7 @@ export default function Main() {
         // console.log(res.status);
     };
 
-    if (session?.user?.email !== "ii@icyf.me") {
+    if (!checkEmail(session?.user?.email, process.env.ACCEPTED_EMAIL)) {
         return UnauthorizedUser();
     }
 
