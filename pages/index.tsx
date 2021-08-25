@@ -1,19 +1,66 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import UnauthorizedUser from './auth/unauthorized';
+import { Grid, Button, Typography, InputBase } from '@material-ui/core';
+import UnauthorizedPage from './unauthorized';
+import { grey } from '@material-ui/core/colors';
+import SearchIcon from '@material-ui/icons/Search';
 
 import axios from 'axios';
-import { signIn, signOut, useSession } from 'next-auth/client';
-
-import { checkEmail } from 'src/components/Utils';
+import { signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        '& > *': {
-            margin: theme.spacing(1),
-        },
+        flexGrow: 1,
+    },
+    userName: {
+        marginLeft: theme.spacing(2),
+        marginRight: theme.spacing(2),
+        verticalAlign: 'middle',
+    },
+    logoutButton: {
+        margin: theme.spacing(2),
+        marginRight: theme.spacing(3),
+        paddingLeft: theme.spacing(3),
+        paddingRight: theme.spacing(3),
+        fontSize: 16,
+    },
+    centralTitle: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    brand: {
+        marginTop: theme.spacing(20),
+        fontFamily: 'Nunito',
+    },
+    searchBox: {
+        marginTop: theme.spacing(3),
+        display: 'flex',
+        margin: '0 auto',
+        width: 'auto',
+        height: 44,
+        borderRadius: 24,
+        border: 'solid 1px #CED1D5',
+        boxShadow: 'none',
+        zIndex: 3,
+    },
+    searchBoxIcon: {
+        color: grey[600],
+        marginLeft: theme.spacing(1.5),
+        marginRight: theme.spacing(1),
+    },
+    searchBoxInput: {
+        width: 'min(550px, 80vw)',
+        marginRight: 16,
+        display: 'flex',
+        flex: 1,
+        outline: 'none',
+        border: 'none',
+        wordWrap: 'break-word',
+        WebkitTapHighlightColor: 'transparent',
+        color: 'rgba(0, 0, 0, .87)',
+        backgroundColor: 'transparent',
     },
 }));
 
@@ -23,32 +70,44 @@ export default function Main() {
 
     const [session, loading] = useSession();
 
-    const reqPutPaper = async () => {
-        // console.log('reqPutPaper');
-        let res = await axios.put('/api/paper', { title: 'Orion' });
-        // console.log(res.status);
-    };
-
-    if (!checkEmail(session?.user?.email, process.env.ACCEPTED_EMAIL)) {
-        return UnauthorizedUser();
+    if (!session) {
+        return <UnauthorizedPage />;
     }
 
     return (
         <div className={classes.root}>
-            <Button variant='contained' color='primary' onClick={reqPutPaper}>
-                Put paper
-            </Button>
-            <Button variant='contained' color='primary'>
-                Get paper
-            </Button>
-            {!session && <Button onClick={() => signIn()}>Login</Button>}
-            {session && (
-                <div>
-                    <Typography>Signed in as {session.user?.email}</Typography>
-                    <Button onClick={() => signOut()}>Logout</Button>
-                </div>
-            )}
-            <Typography variant='body1'>{dbObj}</Typography>
+            <Grid container>
+                <Grid container justifyContent='flex-end' alignItems='center'>
+                    <Grid item>
+                        <Typography variant='h6' className={classes.userName}>
+                            {session.user?.name}
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            color='primary'
+                            className={classes.logoutButton}
+                            onClick={() => signOut()}
+                        >
+                            Logout
+                        </Button>
+                    </Grid>
+                </Grid>
+                <Grid container className={classes.centralTitle} alignItems='center'>
+                    <Typography variant='h2' className={classes.brand}>Papercraft</Typography>
+                </Grid>
+                <Grid container className={classes.searchBox} justifyContent='center' alignItems='center'>
+                    <Grid item className={classes.searchBoxIcon}>
+                        <Grid container alignItems='center'>
+                            <SearchIcon />
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <InputBase className={classes.searchBoxInput} inputProps={{ 'aria-label': 'naked' }} />
+                    </Grid>
+                </Grid>
+            </Grid>
         </div>
     );
 }

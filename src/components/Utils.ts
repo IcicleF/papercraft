@@ -1,8 +1,19 @@
-export function checkEmail(email: string | null | undefined, accepted: string | undefined): boolean {
-    console.log(email);
-    console.log(accepted);
-    if (!email || !accepted)
-        return false;
-    
-    return accepted.indexOf(email) > -1;
+import { Profile } from 'next-auth';
+
+type TsinghuaIdentity = {
+    provider: string;
+    extern_uid: string;
+};
+
+export function checkProfile(profile: Profile): boolean {
+    let identities = profile.identities as TsinghuaIdentity[];
+    let accepted = process.env.ACCEPTED_UIDS;
+    if (!identities || identities.length == 0 || !accepted) return false;
+
+    for (let i = 0; i < identities.length; i++) {
+        let identity = identities[i];
+        if (!identity || identity.provider !== 'thuid') continue;
+        if (accepted.indexOf(identity.extern_uid) > -1) return true;
+    }
+    return false;
 }

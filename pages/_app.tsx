@@ -7,6 +7,8 @@ import theme from 'src/theme';
 import { AppProps } from 'next/app';
 import { Provider as NextAuthProvider } from 'next-auth/client';
 
+import '../css/fonts.css';
+
 export default function App({ Component, pageProps }: AppProps) {
     React.useEffect(() => {
         // Remove the server-side injected CSS.
