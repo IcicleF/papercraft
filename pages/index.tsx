@@ -66,12 +66,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Main() {
     const classes = useStyles();
-    const [dbObj, setDbObj] = useState<string>('');
-
     const [session, loading] = useSession();
-
     if (!session) {
         return <UnauthorizedPage />;
+    }
+
+    const [searchStr, setSearchStr] = useState<string>('');
+    const handleChange = (event) => {
+        
     }
 
     return (
@@ -94,17 +96,32 @@ export default function Main() {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container className={classes.centralTitle} alignItems='center'>
-                    <Typography variant='h2' className={classes.brand}>Papercraft</Typography>
+                <Grid
+                    container
+                    className={classes.centralTitle}
+                    alignItems='center'
+                >
+                    <Typography variant='h2' className={classes.brand}>
+                        Papercraft
+                    </Typography>
                 </Grid>
-                <Grid container className={classes.searchBox} justifyContent='center' alignItems='center'>
+                <Grid
+                    container
+                    className={classes.searchBox}
+                    justifyContent='center'
+                    alignItems='center'
+                >
                     <Grid item className={classes.searchBoxIcon}>
                         <Grid container alignItems='center'>
                             <SearchIcon />
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <InputBase className={classes.searchBoxInput} inputProps={{ 'aria-label': 'naked' }} />
+                        <InputBase
+                            className={classes.searchBoxInput}
+                            inputProps={{ 'aria-label': 'naked' }}
+                            onChange={handleChange}
+                        />
                     </Grid>
                 </Grid>
             </Grid>
