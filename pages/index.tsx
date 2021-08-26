@@ -5,8 +5,8 @@ import UnauthorizedPage from './unauthorized';
 import { grey } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
 
-import axios from 'axios';
 import { signOut, useSession } from 'next-auth/client';
+import { useEffect } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -69,67 +69,74 @@ export default function Main() {
     const [session, loading] = useSession();
 
     const [hQueryTimeout, setHQueryTimeout] = useState<ReturnType<typeof setTimeout>>();
+    const [redirect, setRedirect] = useState<string>('');
 
-    const doSearch = (searchStr: string) => () => { console.log(searchStr); };
+    const doSearch = (searchStr: string) => () => {
+        console.log(searchStr);
+        setRedirect(`/search/${searchStr}`);
+    };
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         clearTimeout(Number(hQueryTimeout));
-        setHQueryTimeout(setTimeout(doSearch(event.target.value), 1000));
-    }
+        setHQueryTimeout(setTimeout(doSearch(event.target.value), 750));
+    };
 
     // Return must below all hooks
     if (!session) {
         return <UnauthorizedPage />;
     }
 
+    // If redirect flag set, then go there
+    if (redirect !== '') {
+        window.location.href = redirect;
+    }
+
     return (
-        <div className={classes.root}>
-            <Grid container>
-                <Grid container justifyContent='flex-end' alignItems='center'>
-                    <Grid item>
-                        <Typography variant='h6' className={classes.userName}>
-                            {session.user?.name}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            color='primary'
-                            className={classes.logoutButton}
-                            onClick={() => signOut()}
-                        >
-                            Logout
-                        </Button>
-                    </Grid>
-                </Grid>
-                <Grid
-                    container
-                    className={classes.centralTitle}
-                    alignItems='center'
-                >
-                    <Typography variant='h2' className={classes.brand}>
-                        Papercraft
+        <Grid container className={classes.root}>
+            <Grid container justifyContent='flex-end' alignItems='center'>
+                <Grid item>
+                    <Typography variant='h6' className={classes.userName}>
+                        {session.user?.name}
                     </Typography>
                 </Grid>
-                <Grid
-                    container
-                    className={classes.searchBox}
-                    justifyContent='center'
-                    alignItems='center'
-                >
-                    <Grid item className={classes.searchBoxIcon}>
-                        <Grid container alignItems='center'>
-                            <SearchIcon />
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <InputBase
-                            className={classes.searchBoxInput}
-                            inputProps={{ 'aria-label': 'naked' }}
-                            onChange={handleChange}
-                        />
-                    </Grid>
+                <Grid item>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        className={classes.logoutButton}
+                        onClick={() => signOut()}
+                    >
+                        Logout
+                    </Button>
                 </Grid>
             </Grid>
-        </div>
+            <Grid
+                container
+                className={classes.centralTitle}
+                alignItems='center'
+            >
+                <Typography variant='h2' className={classes.brand}>
+                    Papercraft
+                </Typography>
+            </Grid>
+            <Grid
+                container
+                className={classes.searchBox}
+                justifyContent='center'
+                alignItems='center'
+            >
+                <Grid item className={classes.searchBoxIcon}>
+                    <Grid container alignItems='center'>
+                        <SearchIcon />
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <InputBase
+                        className={classes.searchBoxInput}
+                        inputProps={{ 'aria-label': 'naked' }}
+                        onChange={handleChange}
+                    />
+                </Grid>
+            </Grid>
+        </Grid>
     );
 }

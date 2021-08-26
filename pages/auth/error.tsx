@@ -4,6 +4,7 @@ import { Button, Grid, Paper, Typography } from '@material-ui/core';
 import { grey } from '@material-ui/core/colors';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/dist/client/router';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,18 +32,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { query } = context;
-    return {
-        props: {
-            error: query.error,
-        },
-    };
-};
+export default function AuthError() {
+    const router = useRouter();
+    const error = router.query.error as string;
 
-export default function AuthError({
-    error,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const classes = useStyles();
 
     let title: string;
