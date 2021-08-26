@@ -68,7 +68,8 @@ export default function Main() {
     const classes = useStyles();
     const [session, loading] = useSession();
 
-    const [hQueryTimeout, setHQueryTimeout] = useState<ReturnType<typeof setTimeout>>();
+    const [hQueryTimeout, setHQueryTimeout] =
+        useState<ReturnType<typeof setTimeout>>();
     const [redirect, setRedirect] = useState<string>('');
 
     const doSearch = (searchStr: string) => () => {

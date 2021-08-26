@@ -46,7 +46,7 @@ export default function AuthError() {
             title = 'SERVER CONFIGURATION ERROR';
             details = [
                 'The server is currently experiencing issues with its authentication functionalities.',
-                'Contact the site manager if you can.',
+                'Contact the site manager if you want.',
             ];
             break;
         case 'AccessDenied':
