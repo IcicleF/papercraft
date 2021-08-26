@@ -67,13 +67,18 @@ const useStyles = makeStyles((theme) => ({
 export default function Main() {
     const classes = useStyles();
     const [session, loading] = useSession();
-    if (!session) {
-        return <UnauthorizedPage />;
+
+    const [hQueryTimeout, setHQueryTimeout] = useState<ReturnType<typeof setTimeout>>();
+
+    const doSearch = (searchStr: string) => () => { console.log(searchStr); };
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        clearTimeout(Number(hQueryTimeout));
+        setHQueryTimeout(setTimeout(doSearch(event.target.value), 1000));
     }
 
-    const [searchStr, setSearchStr] = useState<string>('');
-    const handleChange = (event) => {
-        
+    // Return must below all hooks
+    if (!session) {
+        return <UnauthorizedPage />;
     }
 
     return (

@@ -88,7 +88,7 @@ export default function AuthError({
                     <Grid item xs={12}>
                         {details.map((str, ind) => (
                             <Typography
-                                id={'details-' + ind}
+                                key={'details-' + ind}
                                 align='center'
                                 variant='body1'
                                 className={classes.typography}
