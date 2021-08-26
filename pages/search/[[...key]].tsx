@@ -10,9 +10,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Search() {
     const router = useRouter();
-    const key = router.query.key as string;
+    const pKey = router.query.key as string[] | undefined;
 
     const classes = useStyles();
+
+    const key = pKey?.join('/');
 
     return (
         <div className={classes.root}>
