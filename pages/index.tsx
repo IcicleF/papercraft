@@ -7,8 +7,6 @@ import {
     Typography,
     InputBase,
     Checkbox,
-} from '@material-ui/core';
-import {
     FormControl,
     FormGroup,
     FormLabel,
@@ -19,7 +17,6 @@ import { grey } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { signOut, useSession } from 'next-auth/client';
-import { useEffect } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -114,9 +111,10 @@ export default function Main() {
     };
 
     // Checkboxes
-    const [searchEngine, setSearchEngine] = useState({
+    const [searchEngine, setSearchEngine] = useState<Record<string, boolean>>({
         dblp: true,
         google: false,
+        microsoft: false,
         arxiv: false,
     });
 
@@ -128,6 +126,7 @@ export default function Main() {
             [event.target.name]: event.target.checked,
         });
     };
+    const checkboxError = Object.keys(searchEngine).filter((key) => Boolean(searchEngine[key])).length < 1;
 
     // Return must below all hooks
     if (!session) {
@@ -191,6 +190,8 @@ export default function Main() {
                     <Grid container justifyContent='center'>
                         <Grid item>
                             <FormControl
+                                required
+                                error={checkboxError}
                                 component='fieldset'
                                 className={classes.formControl}
                             >
@@ -217,6 +218,16 @@ export default function Main() {
                                             />
                                         }
                                         label='Google Scholar'
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={searchEngine.microsoft}
+                                                onChange={handleCheckboxChange}
+                                                name='microsoft'
+                                            />
+                                        }
+                                        label='MS Academic'
                                     />
                                     <FormControlLabel
                                         control={
