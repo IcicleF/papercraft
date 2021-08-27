@@ -13,5 +13,8 @@ tsconfig.json
 # Next.js
 .next/
 
+# Markdown
+*.md
+
 # VSCode
 .vscode

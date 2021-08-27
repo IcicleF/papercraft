@@ -79,8 +79,9 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(1),
     },
     searchBoxInput: {
-        width: 'min(550px, 80vw)',
+        width: 'min(600px, 80vw)',
         marginRight: 16,
+        fontSize: 14,
         display: 'flex',
         flex: 1,
         outline: 'none',
@@ -283,6 +284,7 @@ export default function Main() {
                                             id='author-input'
                                             className={classes.authorInput}
                                             value={authorName}
+                                            onKeyDown={handleSearchKeyDown}
                                             onChange={(event) => setAuthorName(event.target.value)}
                                             label='Author Name'
                                             variant='outlined'
