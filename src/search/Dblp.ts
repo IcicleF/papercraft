@@ -20,12 +20,13 @@ type DblpCompletions = {
 type DblpAuthor = { '@pid': string; text: string };
 type DblpAuthors = { author: [DblpAuthor] };
 
-type DblpGeneralHitInfo = {
-    type: string;
+type DblpHitInfo = {
+    type: 'Conference and Workshop Papers' | 'Journal Articles' | 'Informal Publications';
     authors: DblpAuthors;
     title: string;
     venue: string;
     volume?: string;
+    number?: string;
     pages?: string;
     year: string;
     key: string;
@@ -33,21 +34,6 @@ type DblpGeneralHitInfo = {
     ee: string;
     url: string;
 };
-
-type DblpConferenceHitInfo = {
-    type: 'Conference and Workshop Papers';
-} & DblpGeneralHitInfo;
-
-type DblpJournalHitInfo = {
-    type: 'Journal Articles';
-    number: string;
-} & DblpGeneralHitInfo;
-
-type DblpInformalHitInfo = {
-    type: 'Informal Publications';
-} & DblpGeneralHitInfo;
-
-type DblpHitInfo = DblpConferenceHitInfo | DblpJournalHitInfo | DblpInformalHitInfo;
 
 type DblpHit = {
     '@score': string;
