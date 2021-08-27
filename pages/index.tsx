@@ -5,12 +5,14 @@ import {
     Paper,
     Button,
     Typography,
+    TextField,
     InputBase,
     Checkbox,
     FormControl,
     FormGroup,
     FormLabel,
     FormControlLabel,
+    FormHelperText,
 } from '@material-ui/core';
 import UnauthorizedPage from './unauthorized';
 import { grey } from '@material-ui/core/colors';
@@ -67,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
         height: 44,
         borderRadius: 24,
         border: 'solid 1px ' + grey[600],
+        backgroundColor: 'white',
         boxShadow: 'none',
         zIndex: 3,
     },
@@ -89,6 +92,12 @@ const useStyles = makeStyles((theme) => ({
     },
     formControl: {
         margin: theme.spacing(2),
+        marginLeft: theme.spacing(4),
+    },
+    authorInput: {
+        marginTop: theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        backgroundColor: 'white',
     },
 }));
 
@@ -96,46 +105,54 @@ export default function Main() {
     const classes = useStyles();
     const [session, loading] = useSession();
 
-    // Query & redirect to search page
-    const [hQueryTimeout, setHQueryTimeout] =
-        useState<ReturnType<typeof setTimeout>>();
-    const [redirect, setRedirect] = useState('');
-
-    const doSearch = (searchStr: string) => () => {
-        console.log(searchStr);
-        setRedirect(`/search/${searchStr}`);
-    };
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        clearTimeout(Number(hQueryTimeout));
-        setHQueryTimeout(setTimeout(doSearch(event.target.value), 750));
-    };
-
-    // Checkboxes
+    // Search engine
     const [searchEngine, setSearchEngine] = useState<Record<string, boolean>>({
         dblp: true,
         google: false,
-        microsoft: false,
         arxiv: false,
     });
 
-    const handleCheckboxChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleSearchEngineChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchEngine({
             ...searchEngine,
             [event.target.name]: event.target.checked,
         });
     };
-    const checkboxError = Object.keys(searchEngine).filter((key) => Boolean(searchEngine[key])).length < 1;
+    const searchEngineError =
+        Object.keys(searchEngine).filter((key) => Boolean(searchEngine[key])).length < 1;
+
+    // Advanced search
+    const [advancedSearch, setAdvancedSearch] = useState<Record<string, boolean>>({
+        title: true,
+        author: false,
+    });
+    const [authorName, setAuthorName] = useState('');
+
+    const handleAdvancedSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAdvancedSearch({
+            ...advancedSearch,
+            [event.target.name]: event.target.checked,
+        });
+    };
+    const advancedSearchError =
+        Object.keys(advancedSearch).filter((key) => Boolean(advancedSearch[key])).length < 1;
+
+    // Query
+    const [query, setQuery] = useState('');
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(event.target.value);
+    };
+    const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'Enter') return;
+        if (searchEngineError || advancedSearchError) return;
+
+        // TODO: make proper URL
+        window.location.href = `/search/${query}`;
+    };
 
     // Return must below all hooks
     if (!session) {
         return <UnauthorizedPage />;
-    }
-
-    // If redirect flag set and is not empty, then go there
-    if (redirect !== '' && redirect !== '/search/') {
-        window.location.href = redirect;
     }
 
     return (
@@ -157,17 +174,13 @@ export default function Main() {
                     </Button>
                 </Grid>
             </Grid>
-            <Grid
-                container
-                className={classes.centralTitle}
-                alignItems='center'
-            >
+            <Grid container className={classes.centralTitle} alignItems='center'>
                 <Typography variant='h2' className={classes.brand}>
                     Papercraft
                 </Typography>
             </Grid>
             <Grid container className={classes.central}>
-                <Paper elevation={2} className={classes.paper}>
+                <Paper elevation={3} className={classes.paper}>
                     <Grid
                         container
                         className={classes.searchBox}
@@ -182,28 +195,29 @@ export default function Main() {
                         <Grid item>
                             <InputBase
                                 className={classes.searchBoxInput}
+                                value={query}
+                                disabled={!advancedSearch.title}
                                 inputProps={{ 'aria-label': 'naked' }}
+                                onKeyDown={handleSearchKeyDown}
                                 onChange={handleSearchChange}
                             />
                         </Grid>
                     </Grid>
                     <Grid container justifyContent='center'>
-                        <Grid item>
+                        <Grid item xs={6}>
                             <FormControl
                                 required
-                                error={checkboxError}
+                                error={searchEngineError}
                                 component='fieldset'
                                 className={classes.formControl}
                             >
-                                <FormLabel component='legend'>
-                                    Search engine
-                                </FormLabel>
+                                <FormLabel component='legend'>Search engine</FormLabel>
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
                                                 checked={searchEngine.dblp}
-                                                onChange={handleCheckboxChange}
+                                                onChange={handleSearchEngineChange}
                                                 name='dblp'
                                             />
                                         }
@@ -213,7 +227,7 @@ export default function Main() {
                                         control={
                                             <Checkbox
                                                 checked={searchEngine.google}
-                                                onChange={handleCheckboxChange}
+                                                onChange={handleSearchEngineChange}
                                                 name='google'
                                             />
                                         }
@@ -222,24 +236,62 @@ export default function Main() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={searchEngine.microsoft}
-                                                onChange={handleCheckboxChange}
-                                                name='microsoft'
-                                            />
-                                        }
-                                        label='MS Academic'
-                                    />
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
                                                 checked={searchEngine.arxiv}
-                                                onChange={handleCheckboxChange}
+                                                onChange={handleSearchEngineChange}
                                                 name='arxiv'
                                             />
                                         }
                                         label='arXiv CoRR'
                                     />
                                 </FormGroup>
+                                {searchEngineError && (
+                                    <FormHelperText>Need a search engine.</FormHelperText>
+                                )}
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl
+                                required
+                                error={advancedSearchError}
+                                component='fieldset'
+                                className={classes.formControl}
+                            >
+                                <FormLabel component='legend'>Advanced search</FormLabel>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={advancedSearch.title}
+                                                onChange={handleAdvancedSearchChange}
+                                                name='title'
+                                            />
+                                        }
+                                        label='Search title'
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={advancedSearch.author}
+                                                onChange={handleAdvancedSearchChange}
+                                                name='author'
+                                            />
+                                        }
+                                        label='Search author'
+                                    />
+                                    {advancedSearch.author && (
+                                        <TextField
+                                            id='author-input'
+                                            className={classes.authorInput}
+                                            value={authorName}
+                                            onChange={(event) => setAuthorName(event.target.value)}
+                                            label='Author Name'
+                                            variant='outlined'
+                                        />
+                                    )}
+                                </FormGroup>
+                                {advancedSearchError && (
+                                    <FormHelperText>Need to search something.</FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                     </Grid>

@@ -58,10 +58,7 @@ export default function AuthError() {
             break;
         default:
             title = 'LOGIN ERROR';
-            details = [
-                'Currently, you can not login to this site.',
-                'Please retry later.',
-            ];
+            details = ['Currently, you can not login to this site.', 'Please retry later.'];
             break;
     }
 
@@ -70,11 +67,7 @@ export default function AuthError() {
             <Paper className={classes.paper}>
                 <Grid container justifyContent='center' spacing={2}>
                     <Grid item xs={12}>
-                        <Typography
-                            align='center'
-                            variant='h2'
-                            className={classes.title}
-                        >
+                        <Typography align='center' variant='h2' className={classes.title}>
                             {title}
                         </Typography>
                     </Grid>

@@ -38,30 +38,17 @@ export default function UnauthorizedPage() {
             <Paper className={classes.paper}>
                 <Grid container justifyContent='center' spacing={2}>
                     <Grid item xs={12}>
-                        <Typography
-                            align='center'
-                            variant='h2'
-                            className={classes.title}
-                        >
+                        <Typography align='center' variant='h2' className={classes.title}>
                             UNAUTHORIZED ACCESS
                         </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography
-                            align='center'
-                            variant='body1'
-                            className={classes.typography}
-                        >
-                            This site is only open to authorized logged-in
-                            users.
+                        <Typography align='center' variant='body1' className={classes.typography}>
+                            This site is only open to authorized logged-in users.
                         </Typography>
-                        <Typography
-                            align='center'
-                            variant='body1'
-                            className={classes.typography}
-                        >
-                            Prepare a valid Tsinghua Git account, contact the
-                            site manager, then login.
+                        <Typography align='center' variant='body1' className={classes.typography}>
+                            Prepare a valid Tsinghua Git account, contact the site manager, then
+                            login.
                         </Typography>
                     </Grid>
                     <Grid item>
