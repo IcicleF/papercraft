@@ -59,6 +59,11 @@ type DblpQueryResult = {
 };
 type DblpQuery = { result: DblpQueryResult };
 
-function searchDblp(q: string, author: string, range?: number, comp?: number) {
-    
+async function searchDblp(q: string | null, author: string | null, range?: number, comp?: number) {
+    // TODO: formalize q and author
+    let query = await axios.get(`https://dblp.org/search/publ/api`, {
+        params: {
+            q,
+        },
+    });
 }
