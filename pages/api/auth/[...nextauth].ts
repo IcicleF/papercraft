@@ -1,5 +1,5 @@
 import NextAuth, { Profile, User } from 'next-auth';
-import { checkProfile } from 'src/Utils';
+import { checkProfile } from 'src/utils';
 
 export default NextAuth({
     providers: [

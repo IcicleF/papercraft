@@ -5,6 +5,7 @@ type TsinghuaIdentity = {
     extern_uid: string;
 };
 
+// Check user profile
 export function checkProfile(profile: Profile): boolean {
     let identities = profile.identities as TsinghuaIdentity[];
     let accepted = process.env.ACCEPTED_UIDS;
