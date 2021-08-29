@@ -1,9 +1,7 @@
-import axios from 'axios';
-
 // Metadata
-type DblpStatus = { '@code': string; text: string };
-type DblpTime = { '@time': string; text: string };
-type DblpCompletions = {
+export type DblpStatus = { '@code': string; text: string };
+export type DblpTime = { '@time': string; text: string };
+export type DblpCompletions = {
     '@total': string;
     '@computed': string;
     '@sent': string;
@@ -17,10 +15,10 @@ type DblpCompletions = {
 };
 
 // Query hit information
-type DblpAuthor = { '@pid': string; text: string };
-type DblpAuthors = { author: [DblpAuthor] };
+export type DblpAuthor = { '@pid': string; text: string };
+export type DblpAuthors = { author: DblpAuthor | DblpAuthor[] };
 
-type DblpHitInfo = {
+export type DblpHitInfo = {
     type: 'Conference and Workshop Papers' | 'Journal Articles' | 'Informal Publications';
     authors: DblpAuthors;
     title: string;
@@ -35,35 +33,26 @@ type DblpHitInfo = {
     url: string;
 };
 
-type DblpHit = {
+export type DblpHit = {
     '@score': string;
     '@id': string;
     info: DblpHitInfo;
     url: string;
 };
-type DblpHits = {
+export type DblpHits = {
     '@total': string;
     '@computed': string;
     '@sent': string;
     '@first': string;
-    hit: [DblpHit];
+    hit: DblpHit[];
 };
 
 // Whole
-type DblpQueryResult = {
+export type DblpQueryResult = {
     query: string;
     status: DblpStatus;
     time: DblpTime;
     completions: DblpCompletions;
     hits: DblpHits;
 };
-type DblpQuery = { result: DblpQueryResult };
-
-async function searchDblp(q: string | null, author: string | null, range?: number, comp?: number) {
-    // TODO: formalize q and author
-    let query = await axios.get(`https://dblp.org/search/publ/api`, {
-        params: {
-            q,
-        },
-    });
-}
+export type DblpQuery = { result: DblpQueryResult };

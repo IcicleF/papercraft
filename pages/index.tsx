@@ -17,6 +17,7 @@ import {
 import UnauthorizedPage from './unauthorized';
 import { grey } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
+
 import { signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles((theme) => ({
@@ -105,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
     authorHelp: {
         marginTop: theme.spacing(1),
         marginLeft: theme.spacing(1),
-    }
+    },
 }));
 
 export default function Main() {
@@ -154,16 +155,23 @@ export default function Main() {
         if (searchEngineError || advancedSearchError) return;
 
         let args: Record<string, string> = {};
-        args['engine'] = Object.keys(searchEngine).filter((key) => searchEngine[key]).join(',');
-        
-        if (advancedSearch.title && query !== '')
-            args['q'] = query;
-        if (advancedSearch.author && authorName !== '')
-            args['a'] = authorName;
+        args['engine'] = Object.keys(searchEngine)
+            .filter((key) => searchEngine[key])
+            .join(',');
 
-        let param = Object.keys(args).map((key) => key + '=' + encodeURIComponent(args[key])).join('&');
-        if (param !== '')
+        if (advancedSearch.title && query !== '') {
+            args['q'] = query;
+        }
+        if (advancedSearch.author && authorName !== '') {
+            args['a'] = authorName;
+        }
+
+        let param = Object.keys(args)
+            .map((key) => key + '=' + encodeURIComponent(args[key]))
+            .join('&');
+        if (param !== '') {
             window.location.href = `/search?${param}`;
+        }
     };
 
     // Return must below all hooks
@@ -311,11 +319,11 @@ export default function Main() {
                                         />
                                     )}
                                 </FormGroup>
-                                {advancedSearch.author &&
+                                {advancedSearch.author && (
                                     <FormHelperText className={classes.authorHelp}>
                                         Author search is not fully supported.
                                     </FormHelperText>
-                                }
+                                )}
                                 {advancedSearchError && (
                                     <FormHelperText>Need to search something.</FormHelperText>
                                 )}
