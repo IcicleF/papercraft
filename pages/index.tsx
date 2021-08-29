@@ -126,7 +126,7 @@ export default function Main() {
         });
     };
     const searchEngineError =
-        Object.keys(searchEngine).filter((key) => Boolean(searchEngine[key])).length < 1;
+        Object.keys(searchEngine).filter((key) => searchEngine[key]).length < 1;
 
     // Advanced search
     const [advancedSearch, setAdvancedSearch] = useState<Record<string, boolean>>({
@@ -154,6 +154,8 @@ export default function Main() {
         if (searchEngineError || advancedSearchError) return;
 
         let args: Record<string, string> = {};
+        args['engine'] = Object.keys(searchEngine).filter((key) => searchEngine[key]).join(',');
+        
         if (advancedSearch.title && query !== '')
             args['q'] = query;
         if (advancedSearch.author && authorName !== '')

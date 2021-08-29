@@ -1,20 +1,24 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import React, { useState } from 'react';
 import {
+    makeStyles,
+    Accordion,
     Grid,
     Paper,
     Button,
     Typography,
     TextField,
     InputBase,
+    AccordionSummary,
+    AccordionDetails,
 } from '@material-ui/core';
-import UnauthorizedPage from './unauthorized';
 import { grey } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
-import { useRouter } from 'next/dist/client/router';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+import UnauthorizedPage from './unauthorized';
 import axios from 'axios';
+import { useRouter } from 'next/dist/client/router';
 import { useSession } from 'next-auth/client';
-import { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,15 +60,27 @@ const useStyles = makeStyles((theme) => ({
         color: 'rgba(0, 0, 0, .87)',
         backgroundColor: 'transparent',
     },
-    divider: {
-        width: '90vw',
+
+    // Search result accordion
+    accordionHeading: {
+        fontSize: 15,
+        fontWeight: theme.typography.fontWeightRegular,
     },
 }));
 
 export default function Search() {
+    // Parse GET params
     const router = useRouter();
+    console.log(router.query);
     const title = router.query.q as (string | undefined);
     const author = router.query.a as (string | undefined);
+    const engines = router.query.engine as (string | undefined);
+
+    const engine = {
+        dblp: Boolean(engines && engines.search('dblp') >= 0),
+        google: Boolean(engines && engines.search('google') >= 0),
+        arxiv: Boolean(engines &&engines.search('arxiv') >= 0),
+    };
 
     const classes = useStyles();
     const [session, loading] = useSession();
@@ -114,6 +130,28 @@ export default function Search() {
                         </Grid>
                     </Grid>
                 </Grid>
+            </Grid>
+            <Grid container justifyContent='center' alignItems='center'>
+                {engine.dblp &&
+                    <Grid item>
+                        <Accordion defaultExpanded>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls='panel-dblp-content'
+                                id='panel-dblp-header'
+                            >
+                                <Typography className={classes.accordionHeading}>
+                                    DBLP
+                                </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>
+                                    Lorem ipsum.
+                                </Typography>
+                            </AccordionDetails>
+                        </Accordion>
+                    </Grid>
+                }
             </Grid>
         </Grid>
     );
