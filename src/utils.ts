@@ -18,3 +18,29 @@ export function checkProfile(profile: Profile): boolean {
     }
     return false;
 }
+
+// Query string build & parse
+export function buildQueryString(
+    title: string | undefined,
+    author: string | undefined,
+    engine: { dblp: boolean; google: boolean; arxiv: boolean }
+): string | null {
+    let engines: string[] = [];
+    if (engine.dblp) engines.push('dblp');
+    if (engine.google) engines.push('google');
+    if (engine.arxiv) engines.push('arxiv');
+    if (engines === []) return null;
+    let engineStr = 'engine=' + engines.join(',');
+
+    let authorStr: string | undefined = undefined;
+    if (author) {
+        authorStr = 'author="' + author + '"';
+    }
+
+    let titleStr = title;
+    if (!authorStr && !titleStr) return null;
+
+    let collection = [engineStr, authorStr, titleStr];
+    let searchStr = collection.filter((value) => Boolean(value)).join(' ');
+    return searchStr;
+}

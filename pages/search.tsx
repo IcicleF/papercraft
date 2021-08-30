@@ -17,11 +17,11 @@ import SearchIcon from '@material-ui/icons/Search';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import UnauthorizedPage from './unauthorized';
 
-import axios from 'axios';
 import { signOut, useSession } from 'next-auth/client';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { GetServerSideProps } from 'next';
 import { SearchEngineResult } from 'src/types/common';
 import { searchDblp } from 'src/search/searchDblp';
+import { buildQueryString } from 'src/utils';
 
 // Styles and styled components
 const useStyles = makeStyles((theme) => ({
@@ -175,11 +175,8 @@ export const getServerSideProps: GetServerSideProps = async (
         return wrapSearchProps({ ok: false });
     }
 
-    let props: SearchProps = { ok: true };
-    if (engine.dblp) {
-        console.log('search dblp');
-        props.dblp = await searchDblp(title, author, 0);
-    }
+    let props: SearchProps = { ok: true, title, author };
+    if (engine.dblp) props.dblp = await searchDblp(title, author, 0);
 
     return wrapSearchProps(props);
 };
@@ -191,7 +188,13 @@ export default function Search({ data }: WrappedSearchProps) {
     const [session, loading] = useSession();
 
     // Query
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(
+        buildQueryString(title, author, {
+            dblp: Boolean(dblp),
+            google: Boolean(google),
+            arxiv: Boolean(arxiv),
+        }) || ''
+    );
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
     };
@@ -209,7 +212,7 @@ export default function Search({ data }: WrappedSearchProps) {
     }
 
     // If entered this page by mistake, redirect to home page
-    if (!ok) {
+    if (!ok || query === '') {
         window.location.href = '/';
     }
 

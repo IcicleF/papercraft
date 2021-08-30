@@ -22,13 +22,12 @@ export async function searchDblp(
         return {
             type: info.type,
             title: info.title,
-            authors: (
-                info.authors.author instanceof Array ? 
-                (info.authors.author as DblpAuthor[]).map(({ text }) => text) :
-                [(info.authors.author as DblpAuthor).text]
-            ),
+            authors:
+                info.authors.author instanceof Array
+                    ? (info.authors.author as DblpAuthor[]).map(({ text }) => text)
+                    : [(info.authors.author as DblpAuthor).text],
             year: Number(info.year),
-            url: info.url
+            url: info.url,
         };
     });
     return { page: page || 0, total, res: entries };
