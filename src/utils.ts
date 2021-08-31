@@ -44,3 +44,26 @@ export function buildQueryString(
     let searchStr = collection.filter((value) => Boolean(value)).join(' ');
     return searchStr;
 }
+
+export function parseQueryStringToUri(query: string): string {
+    let title: string | undefined = undefined;
+    let author: string | undefined = undefined;
+    let engine: Record<string, boolean> = {};
+
+    query = query.replace(/\s+/g, ' ').trim();
+
+    const L = query.length;
+    let inScope = false;
+    for (let i = 0; i < L; i++) {
+        let j = i;
+        while (j < L && query[j] !== ' ' || inScope) j++;
+        // TODO: parse 
+    }
+
+    // If a scope didn't close, the query is invalid
+    if (inScope) {
+        return '/';
+    }
+
+    return '/';
+}
