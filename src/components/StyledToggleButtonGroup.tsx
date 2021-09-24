@@ -17,3 +17,5 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
         },
     },
 }));
+
+export default StyledToggleButtonGroup;
