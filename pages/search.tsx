@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import {
-    withStyles,
-    makeStyles,
-    Grid,
-    Paper,
-    Button,
-    Typography,
-    TextField,
-    InputBase,
-    Accordion as MuiAccordion,
-    AccordionSummary as MuiAccordionSummary,
-    AccordionDetails as MuiAccordionDetails,
-} from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
-import SearchIcon from '@material-ui/icons/Search';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import InputBase from '@mui/material/InputBase';
+import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
+import SearchIcon from '@mui/icons-material/Search';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import UnauthorizedPage from './unauthorized';
 
 import { signOut, useSession } from 'next-auth/client';
@@ -24,7 +25,7 @@ import { searchDblp } from 'src/search/searchDblp';
 import { buildQueryString } from 'src/utils';
 
 // Styles and styled components
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         flexGrow: 1,
     },
@@ -95,9 +96,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(6),
         marginRight: theme.spacing(6),
     },
-    accordion: {
-        minWidth: 'max(min(800px, 80vw), 60vw)',
-    },
+    
     accordionHeading: {
         fontSize: 15,
         fontWeight: theme.typography.fontWeightRegular,
@@ -105,46 +104,37 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // Styled Accordion
-const Accordion = withStyles({
-    root: {
-        border: '1px solid rgba(0, 0, 0, .25)',
-        boxShadow: 'none',
-        '&:not(:last-child)': {
-            borderBottom: 0,
-        },
-        '&:before': {
-            display: 'none',
-        },
-        '&$expanded': {
-            margin: 'auto',
-        },
+const Accordion = styled((props: AccordionProps) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+    border: '1px solid rgba(0, 0, 0, .25)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+        borderBottom: 0,
     },
-    expanded: {},
-})(MuiAccordion);
+    '&:before': {
+        display: 'none',
+    },
+}));
 
-const AccordionSummary = withStyles({
-    root: {
-        backgroundColor: 'rgba(0, 0, 0, .03)',
-        borderBottom: '1px solid rgba(0, 0, 0, .125)',
-        marginBottom: -1,
-        minHeight: 56,
-        '&$expanded': {
-            minHeight: 56,
-        },
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+    <MuiAccordionSummary {...props} />
+))(({ theme }) => ({
+    backgroundColor:
+        theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, .05)' : 'rgba(0, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+        transform: 'rotate(180deg)',
     },
-    content: {
-        '&$expanded': {
-            margin: '12px 0',
-        },
+    '& .MuiAccordionSummary-content': {
+        marginLeft: theme.spacing(1),
     },
-    expanded: {},
-})(MuiAccordionSummary);
+  }));
 
-const AccordionDetails = withStyles((theme) => ({
-    root: {
-        padding: theme.spacing(2),
-    },
-}))(MuiAccordionDetails);
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
 
 // Page render
 type SearchProps = Partial<{
@@ -175,7 +165,13 @@ export const getServerSideProps: GetServerSideProps = async (
         return wrapSearchProps({ ok: false });
     }
 
-    let props: SearchProps = { ok: true, title, author };
+    let props: SearchProps = { ok: true };
+
+    // Prevent explicit undefined value
+    if (title)
+        props.title = title;
+    if (author)
+        props.author = author;
     if (engine.dblp) props.dblp = await searchDblp(title, author, 0);
 
     return wrapSearchProps(props);
@@ -270,7 +266,7 @@ export default function Search({ data }: WrappedSearchProps) {
             <Grid container justifyContent='flex-start' alignItems='center'>
                 {Boolean(dblp) && (
                     <Grid item className={classes.accordionContainer}>
-                        <Accordion defaultExpanded className={classes.accordion}>
+                        <Accordion defaultExpanded>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls='panel-dblp-content'
@@ -278,7 +274,7 @@ export default function Search({ data }: WrappedSearchProps) {
                             >
                                 <Typography className={classes.accordionHeading}>DBLP</Typography>
                             </AccordionSummary>
-                            <AccordionDetails>
+                            <AccordionDetails className={classes.flexGrow}>
                                 <Typography>{JSON.stringify(dblp)}</Typography>
                             </AccordionDetails>
                         </Accordion>

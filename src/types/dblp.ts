@@ -5,7 +5,7 @@ export type DblpCompletions = {
     '@total': string;
     '@computed': string;
     '@sent': string;
-    c: {
+    c?: {
         '@sc': string;
         '@dc': string;
         '@oc': string;
@@ -44,7 +44,7 @@ export type DblpHits = {
     '@computed': string;
     '@sent': string;
     '@first': string;
-    hit: DblpHit[];
+    hit?: DblpHit[];
 };
 
 // Whole

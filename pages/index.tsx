@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-    Grid,
-    Paper,
-    Button,
-    Typography,
-    TextField,
-    InputBase,
-    Checkbox,
-    FormControl,
-    FormGroup,
-    FormLabel,
-    FormControlLabel,
-    FormHelperText,
-} from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import InputBase from '@mui/material/InputBase';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormLabel from '@mui/material/FormLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+
 import UnauthorizedPage from './unauthorized';
-import { grey } from '@material-ui/core/colors';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 
 import { signOut, useSession } from 'next-auth/client';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         flexGrow: 1,
     },

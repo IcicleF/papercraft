@@ -18,7 +18,7 @@ export async function searchDblp(
     const res = (apiRes.data as DblpQuery).result;
     const total = Number(res.hits['@total']);
 
-    const entries = res.hits.hit.map(({ info }) => {
+    const entries = res.hits.hit?.map(({ info }) => {
         return {
             type: info.type,
             title: info.title,
@@ -30,5 +30,5 @@ export async function searchDblp(
             url: info.url,
         };
     });
-    return { page: page || 0, total, res: entries };
+    return { page: page || 0, total, res: entries || [] };
 }

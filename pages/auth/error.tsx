@@ -1,12 +1,18 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Grid, Paper, Typography } from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+
 import { signIn, signOut, useSession } from 'next-auth/client';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/dist/client/router';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         flexGrow: 1,
         margin: '15% 20%',
