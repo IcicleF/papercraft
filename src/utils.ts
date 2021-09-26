@@ -56,8 +56,8 @@ export function parseQueryStringToUri(query: string): string {
     let inScope = false;
     for (let i = 0; i < L; i++) {
         let j = i;
-        while (j < L && query[j] !== ' ' || inScope) j++;
-        // TODO: parse 
+        while ((j < L && query[j] !== ' ') || inScope) j++;
+        // TODO: parse
     }
 
     // If a scope didn't close, the query is invalid

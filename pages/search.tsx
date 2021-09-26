@@ -8,7 +8,8 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import InputBase from '@mui/material/InputBase';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
@@ -24,6 +25,8 @@ import { SearchEngineResult } from 'src/types/common';
 import { searchDblp } from 'src/search/searchDblp';
 import { buildQueryString } from 'src/utils';
 
+import DblpIcon from 'src/icons/Dblp';
+
 // Styles and styled components
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -35,6 +38,11 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginLeft: theme.spacing(4),
         marginRight: theme.spacing(10),
         fontFamily: 'Nunito',
+    },
+    engineSelector: {
+        marginRight: theme.spacing(2),
+
+        borderRadius: theme.shape.borderRadius,
     },
     searchBox: {
         display: 'flex',
@@ -96,7 +104,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginLeft: theme.spacing(6),
         marginRight: theme.spacing(6),
     },
-    
+
     accordionHeading: {
         fontSize: 15,
         fontWeight: theme.typography.fontWeightRegular,
@@ -129,7 +137,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
     '& .MuiAccordionSummary-content': {
         marginLeft: theme.spacing(1),
     },
-  }));
+}));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(2),
@@ -168,10 +176,8 @@ export const getServerSideProps: GetServerSideProps = async (
     let props: SearchProps = { ok: true };
 
     // Prevent explicit undefined value
-    if (title)
-        props.title = title;
-    if (author)
-        props.author = author;
+    if (title) props.title = title;
+    if (author) props.author = author;
     if (engine.dblp) props.dblp = await searchDblp(title, author, 0);
 
     return wrapSearchProps(props);
@@ -202,6 +208,11 @@ export default function Search({ data }: WrappedSearchProps) {
         console.log('Keydown ignored');
     };
 
+    const [engines, setEngines] = useState(() => ['dblp', 'google', 'arxiv']);
+    const handleEngineChange = (event: React.MouseEvent<HTMLElement>, newEngines: string[]) => {
+        setEngines(newEngines);
+    };
+
     // Return must below all hooks
     if (!session) {
         return <UnauthorizedPage />;
@@ -219,6 +230,25 @@ export default function Search({ data }: WrappedSearchProps) {
                     <Typography variant='h4' className={classes.brand}>
                         Papercraft
                     </Typography>
+                </Grid>
+                <Grid item>
+                    <ToggleButtonGroup
+                        className={classes.engineSelector}
+                        size='small'
+                        color='primary'
+                        value={engines}
+                        onChange={handleEngineChange}
+                    >
+                        <ToggleButton value='dblp' aria-label='dblp'>
+                            <DblpIcon />
+                        </ToggleButton>
+                        <ToggleButton value='google' aria-label='google'>
+                            G
+                        </ToggleButton>
+                        <ToggleButton value='arxiv' aria-label='arxiv'>
+                            A
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Grid>
                 <Grid item>
                     <Grid
