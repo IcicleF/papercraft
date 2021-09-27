@@ -9,7 +9,7 @@ type TsinghuaIdentity = {
 export function checkProfile(profile: Profile): boolean {
     let identities = profile.identities as TsinghuaIdentity[];
     let accepted = process.env.ACCEPTED_UIDS;
-    if (!identities || identities.length == 0 || !accepted) return false;
+    if (!identities || identities.length === 0 || !accepted) return false;
 
     for (let i = 0; i < identities.length; i++) {
         let identity = identities[i];

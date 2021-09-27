@@ -11,10 +11,12 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import TextField from '@mui/material/TextField';
 import InputBase from '@mui/material/InputBase';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import Popover from '@mui/material/Popover';
 
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -28,6 +30,7 @@ import { GetServerSideProps } from 'next';
 import { SearchEngineResult } from 'src/types/common';
 import { searchDblp } from 'src/search/searchDblp';
 import UnauthorizedPage from './unauthorized';
+import PaperEntry from 'src/components/PaperEntry';
 
 // Styles and styled components
 const useStyles = makeStyles((theme: Theme) => ({
@@ -77,6 +80,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     searchBoxTuner: {
         marginRight: theme.spacing(1),
+    },
+    searchBoxAuthor: {
+        margin: theme.spacing(1),
     },
     flexGrow: {
         flexGrow: 1,
@@ -194,6 +200,26 @@ export default function Search({ data }: WrappedSearchProps) {
     const classes = useStyles();
     const [session, loading] = useSession();
 
+    // Search Engine
+    const undefableEngines = [dblp && 'dblp', google && 'google', arxiv && 'arxiv'];
+    const [engines, setEngines] = useState(() => undefableEngines.filter((x) => Boolean(x)));
+    const handleEngineChange = (event: React.MouseEvent<HTMLElement>, newEngines: string[]) => {
+        setEngines(newEngines);
+    };
+
+    // Author Search Box
+    const [authorSearch, setAuthorSearch] = useState(author || '');
+    const handleAuthorSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAuthorSearch(event.target.value);
+    };
+
+    // Author Search Popup
+    const [authorPopupAnchorEl, setAuthorPopupAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const handleTunerClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+        setAuthorPopupAnchorEl(event.currentTarget);
+    const handleAuthorPopupClose = () => setAuthorPopupAnchorEl(null);
+    const authorPopupOpen = Boolean(authorPopupAnchorEl);
+
     // Query
     const [query, setQuery] = useState(title);
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,16 +227,21 @@ export default function Search({ data }: WrappedSearchProps) {
     };
     const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== 'Enter') return;
-        if (query === '') return;
+        if (query === '' && authorSearch === '') return;
 
-        // TODO: build param and redirect
-        console.log('Keydown ignored');
-    };
+        let args: Record<string, string> = {};
+        args['engine'] = engines.join('_');
+        if (args['engine'] === '') return;
 
-    const undefableEngines = [dblp && 'dblp', google && 'google', arxiv && 'arxiv'];
-    const [engines, setEngines] = useState(() => undefableEngines.filter((x) => Boolean(x)));
-    const handleEngineChange = (event: React.MouseEvent<HTMLElement>, newEngines: string[]) => {
-        setEngines(newEngines);
+        if (query && query !== '') args['q'] = query;
+        if (authorSearch !== '') args['a'] = authorSearch;
+
+        let param = Object.keys(args)
+            .map((key) => key + '=' + encodeURIComponent(args[key]))
+            .join('&');
+        if (param !== '') {
+            window.location.href = `/search?${param}`;
+        }
     };
 
     const handleBrandClick = () => (window.location.href = '/');
@@ -276,11 +307,36 @@ export default function Search({ data }: WrappedSearchProps) {
                         <Grid item>
                             <IconButton
                                 className={classes.searchBoxTuner}
-                                color={Boolean(author) ? 'primary' : 'inherit'}
+                                color={authorSearch !== '' ? 'primary' : 'inherit'}
                                 component='span'
+                                onClick={handleTunerClick}
                             >
                                 <TuneIcon />
                             </IconButton>
+                            <Popover
+                                id={authorPopupOpen ? 'author-popover' : undefined}
+                                open={authorPopupOpen}
+                                anchorEl={authorPopupAnchorEl}
+                                onClose={handleAuthorPopupClose}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                            >
+                                <TextField
+                                    className={classes.searchBoxAuthor}
+                                    id='author-name'
+                                    label='Author Name'
+                                    variant='outlined'
+                                    value={authorSearch}
+                                    onChange={handleAuthorSearchChange}
+                                    onKeyDown={handleSearchKeyDown}
+                                />
+                            </Popover>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -316,7 +372,11 @@ export default function Search({ data }: WrappedSearchProps) {
                                 <Typography className={classes.accordionHeading}>DBLP</Typography>
                             </AccordionSummary>
                             <AccordionDetails className={classes.flexGrow}>
-                                <Typography>{JSON.stringify(dblp)}</Typography>
+                                {
+                                    dblp?.res.map((element, index) => (
+                                        <PaperEntry key={index} record={element} />
+                                    ))
+                                }
                             </AccordionDetails>
                         </Accordion>
                     </Grid>

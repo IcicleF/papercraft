@@ -3,6 +3,7 @@ export interface SearchRecord {
     title: string;
     authors: string[];
     year: number;
+    venue: string;
     url: string;
 }
 

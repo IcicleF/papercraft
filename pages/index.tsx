@@ -158,14 +158,12 @@ export default function Main() {
         let args: Record<string, string> = {};
         args['engine'] = Object.keys(searchEngine)
             .filter((key) => searchEngine[key])
-            .join(',');
+            .join('_');
 
-        if (advancedSearch.title && query !== '') {
+        if (advancedSearch.title && query !== '')
             args['q'] = query;
-        }
-        if (advancedSearch.author && authorName !== '') {
+        if (advancedSearch.author && authorName !== '')
             args['a'] = authorName;
-        }
 
         let param = Object.keys(args)
             .map((key) => key + '=' + encodeURIComponent(args[key]))
