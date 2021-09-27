@@ -19,7 +19,7 @@ export async function searchDblp(
 
     const entries = res.hits.hit?.map(({ info }) => ({
         type: info.type,
-        title: info.title,
+        title: info.title.replace(/\s\-\s/, ': '),
         authors:
             info.authors.author instanceof Array
                 ? (info.authors.author as DblpAuthor[]).map(({ text }) => text)
