@@ -18,3 +18,6 @@ tsconfig.json
 
 # VSCode
 .vscode
+
+# Svg Icons
+src/icons/

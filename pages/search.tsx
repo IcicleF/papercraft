@@ -7,6 +7,7 @@ import { grey } from '@mui/material/colors';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -17,15 +18,16 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 
 import SearchIcon from '@mui/icons-material/Search';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import UnauthorizedPage from './unauthorized';
+import TuneIcon from '@mui/icons-material/Tune';
+import DblpIcon from 'src/icons/Dblp';
+import GoogleIcon from 'src/icons/Google';
+import ArxivIcon from 'src/icons/Arxiv';
 
 import { signOut, useSession } from 'next-auth/client';
 import { GetServerSideProps } from 'next';
 import { SearchEngineResult } from 'src/types/common';
 import { searchDblp } from 'src/search/searchDblp';
-import { buildQueryString } from 'src/utils';
-
-import DblpIcon from 'src/icons/Dblp';
+import UnauthorizedPage from './unauthorized';
 
 // Styles and styled components
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     // Top
     brand: {
         marginLeft: theme.spacing(4),
-        marginRight: theme.spacing(10),
+        marginRight: theme.spacing(8),
         fontFamily: 'Nunito',
     },
     engineSelector: {
@@ -62,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     searchBoxInput: {
         width: 'min(800px, 80vw)',
-        marginRight: 16,
+        marginRight: theme.spacing(0.5),
         fontSize: 15,
         display: 'flex',
         flex: 1,
@@ -72,6 +74,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         WebkitTapHighlightColor: 'transparent',
         color: 'rgba(0, 0, 0, .87)',
         backgroundColor: 'transparent',
+    },
+    searchBoxTuner: {
+        marginRight: theme.spacing(1),
     },
     flexGrow: {
         flexGrow: 1,
@@ -190,13 +195,7 @@ export default function Search({ data }: WrappedSearchProps) {
     const [session, loading] = useSession();
 
     // Query
-    const [query, setQuery] = useState(
-        buildQueryString(title, author, {
-            dblp: Boolean(dblp),
-            google: Boolean(google),
-            arxiv: Boolean(arxiv),
-        }) || ''
-    );
+    const [query, setQuery] = useState(title);
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(event.target.value);
     };
@@ -208,10 +207,13 @@ export default function Search({ data }: WrappedSearchProps) {
         console.log('Keydown ignored');
     };
 
-    const [engines, setEngines] = useState(() => ['dblp', 'google', 'arxiv']);
+    const undefableEngines = [dblp && 'dblp', google && 'google', arxiv && 'arxiv'];
+    const [engines, setEngines] = useState(() => undefableEngines.filter((x) => Boolean(x)));
     const handleEngineChange = (event: React.MouseEvent<HTMLElement>, newEngines: string[]) => {
         setEngines(newEngines);
     };
+
+    const handleBrandClick = () => (window.location.href = '/');
 
     // Return must below all hooks
     if (!session) {
@@ -227,7 +229,7 @@ export default function Search({ data }: WrappedSearchProps) {
         <Grid container className={classes.root}>
             <Grid container justifyContent='flex-start' alignItems='center'>
                 <Grid item>
-                    <Typography variant='h4' className={classes.brand}>
+                    <Typography variant='h4' className={classes.brand} onClick={handleBrandClick}>
                         Papercraft
                     </Typography>
                 </Grid>
@@ -243,10 +245,10 @@ export default function Search({ data }: WrappedSearchProps) {
                             <DblpIcon />
                         </ToggleButton>
                         <ToggleButton value='google' aria-label='google'>
-                            G
+                            <GoogleIcon />
                         </ToggleButton>
                         <ToggleButton value='arxiv' aria-label='arxiv'>
-                            A
+                            <ArxivIcon />
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
@@ -270,6 +272,15 @@ export default function Search({ data }: WrappedSearchProps) {
                                 onKeyDown={handleSearchKeyDown}
                                 onChange={handleSearchChange}
                             />
+                        </Grid>
+                        <Grid item>
+                            <IconButton
+                                className={classes.searchBoxTuner}
+                                color={Boolean(author) ? 'primary' : 'inherit'}
+                                component='span'
+                            >
+                                <TuneIcon />
+                            </IconButton>
                         </Grid>
                     </Grid>
                 </Grid>
