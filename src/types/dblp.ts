@@ -19,7 +19,7 @@ export type DblpAuthor = { '@pid': string; text: string };
 export type DblpAuthors = { author: DblpAuthor | DblpAuthor[] };
 
 export type DblpHitInfo = {
-    type: 'Conference and Workshop Papers' | 'Journal Articles' | 'Informal Publications';
+    type: string;
     authors: DblpAuthors;
     title: string;
     venue: string;
